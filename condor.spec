@@ -27,11 +27,16 @@ sed -i "s,P5_PACKAGE_CONSTANTS_ROOT,$P5_PACKAGE_CONSTANTS_ROOT," externals/bundl
 sed -i "s,ENVLD_LIBRARY_PATH,$LD_LIBRARY_PATH," externals/bundles/globus/5.2.1/CMakeLists.txt
 sed -i "s,LIBTOOL_ROOT,$LIBTOOL_ROOT,g" externals/bundles/globus/5.2.1/CMakeLists.txt
 sed -i "s,OPENSSL_ROOT,$OPENSSL_ROOT,g" externals/bundles/globus/5.2.1/CMakeLists.txt
-sed -i "s,EXPAT_ROOT,$EXPAT_ROOT,g" externals/bundles/voms/2.0.6/CMakeLists.txt
+#sed -i "s,EXPAT_ROOT,$EXPAT_ROOT,g" externals/bundles/voms/2.0.6/CMakeLists.txt
+sed -i "s,EXPAT_ROOT,$PWD/cmake_build/voms_expat,g" externals/bundles/voms/2.0.6/CMakeLists.txt
 
 %build
 mkdir -p cmake_build
 cd cmake_build
+
+mkdir -p voms_expat
+cp -r $EXPAT_ROOT/* voms_expat/
+cp -r voms_expat/lib voms_expat/lib64
 
 # Fix perl libraries for globus which doesn't search PERL%LIB
 mkdir -p build/bld_external/globus-5.2.1-p1/install/lib/perl
@@ -46,7 +51,7 @@ cmake ../ \
   -DWITH_GLOBUS:BOOL=ON \
   -DWITH_CREAM:BOOL=OFF \
   -DWITH_PYTHON_BINDINGS:BOOL=ON \
-  -DWITH_VOMS:BOOL=OFF \
+  -DWITH_VOMS:BOOL=ON \
   -DHAVE_SSH_TO_JOB:BOOL=OFF \
   -DWITH_COREDUMPER:BOOL=OFF \
   -DWITH_DRMAA:BOOL=OFF \
@@ -63,7 +68,7 @@ cmake ../ \
   -DPYTHON_EXECUTABLE:FILEPATH=${PYTHON_ROOT}/bin/python2.6 \
   -DPYTHON_INCLUDE_DIR:PATH=${PYTHON_ROOT}/include/python2.6 \
   -DPYTHON_LIBRARY:FILEPATH=${PYTHON_ROOT}/lib/libpython2.6.so \
-  -DEXPAT_FOUND_SEARCH_expat:FILEPATH=${EXPAT_ROOT}/lib/libexpat.so \
+  -DEXPAT_FOUND_SEARCH_expat:FILEPATH=$PWD/voms_expat/lib64/libexpat.so \
   -DCLIPPED:BOOL=ON
 
 # Use makeprocess macro, it uses compiling_processes defined by
@@ -80,5 +85,5 @@ rm -rf %i/etc %i/examples %i/include
 rm -rf %i/sbin
 rm -rf %i/libexec
 rm -rf %i/src %i/bosco* %i/condor*
-rm -rf %i/lib/condor/{libcom*,libcrypto*,libexpat*,libk*,libl*,libp*,libssl*,libgssapi_krb5*}
+rm -rf %i/lib/condor/{libcom*,libcrypto*,libexpat*1,libk*,libl*,libp*,libssl*,libgssapi_krb5*}
 

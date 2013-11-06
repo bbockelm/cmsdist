@@ -17,6 +17,7 @@ Requires: python
 Requires: libtool
 Requires: p5-archive-tar
 Requires: expat
+Requires: pcre
 
 %prep 
 %setup -n %n-%{realversion}
@@ -83,6 +84,8 @@ cd ..
 
 rm -rf %i/etc %i/examples %i/include
 rm -rf %i/sbin
+# condor_gather_info brings a dependency on Date::Manip
+rm -rf %i/bin/condor_gather_info
 rm -rf %i/libexec
 rm -rf %i/src %i/bosco* %i/condor*
 rm -rf %i/lib/condor/{libcom*,libcrypto*,libexpat*1,libk*,libl*,libp*,libssl*,libgssapi_krb5*}
